@@ -34,4 +34,14 @@ for count, f in enumerate(os.listdir("TRAINING")):
 
     cv2.imwrite("crop\\"+f,rimg[minY:minY+(maxY-minY),minX:minX+(maxX-minX),:])
     print(count)
+  
+
+
+for i,f in enumerate(os.listdir("crop")):
+    img = cv2.imread("crop\\"+f)
+    img = cv2.resize(img,(300,300))
+    cv2.imwrite("resize\\"+f,img)
+    print(i)
+
+
     
