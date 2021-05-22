@@ -1,15 +1,15 @@
 import cv2
 import numpy as np
+
 import os
 
 t = 5
-i = 4
+i = 1
 k = 7
 x = 0
 y = 0
 w = 500
 h = 500
-
 for count, f in enumerate(os.listdir("TRAINING")):
     img = cv2.imread("TRAINING\\"+f)
 
@@ -31,17 +31,10 @@ for count, f in enumerate(os.listdir("TRAINING")):
             maxX = max(c.T[0][0])
             minX = min(c.T[0][0])
         
+   
+    cv2.imwrite("resize32\\"+f,cv2.resize(rimg[minY:minY+(maxY-minY),minX:minX+(maxX-minX),:],(32,32)))
 
-    cv2.imwrite("crop\\"+f,rimg[minY:minY+(maxY-minY),minX:minX+(maxX-minX),:])
     print(count)
-  
-
-
-for i,f in enumerate(os.listdir("crop")):
-    img = cv2.imread("crop\\"+f)
-    img = cv2.resize(img,(300,300))
-    cv2.imwrite("resize\\"+f,img)
-    print(i)
 
 
     
