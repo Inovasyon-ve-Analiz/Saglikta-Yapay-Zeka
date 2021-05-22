@@ -10,26 +10,37 @@ import os
 
 class CTDataset(Dataset):
 
-    def __init__(self,target_file_dir, img_dir,preprocessing_params,range1,range2,range3):
-        self.range1 = range1
-        self.range2 = range2
-        self.range3 = range3
-        self.labels = self.get_labels(target_file_dir)
-        self.img_labels = pd.read_csv(target_file_dir)
-        self.img_dir = img_dir
+    def __init__(self, img_dirs,preprocessing_params,ratio,is_cropping):
+        self.ratio = ratio
+        self.img_dirs = img_dirs
         self.preprocessing_params = preprocessing_params
+        self.is_cropping = is_cropping
+      
+        self.image_dirs = []
+        self.labels = []
+        for dir in self.img_dirs:
+             for i,f in enumerate(os.listdir(dir)):
+                self.image_dirs.append(os.path.join(dir,f))
+                if f[:2] == "IN":
+                   self.labels.append(0)
+                elif f[:2] == "IS":
+                   self.labels.append(1)
+                elif f[:2] == "KA":
+                   self.labels.append(2)
 
     def __len__(self):
         return len(self.labels)
-        #return (self.range[1]-self.range[0])*3
 
     def __getitem__(self, index):
-        img_path = os.path.join(self.img_dir, self.labels[index][0])
+        img_path = self.image_dirs[index]
         #print(img_path)
-        img = cv2.imread(img_path)
-        img = self.process(img)
+        img = cv2.imread(img_path,0)
+        if self.is_cropping:
+            img = self.process(img)
+        else:
+            img = cv2.resize(img,(512,512))
         img = torch.tensor(img)
-        label = self.labels[index][1]
+        label = self.labels[index]
         sample = img, label
         return sample
 
@@ -63,23 +74,7 @@ class CTDataset(Dataset):
         resized = cv2.cvtColor(resized,cv2.COLOR_BGR2GRAY)
         return resized
 
-    def get_labels(self,target_file_dir):
-        labels = []
-        df = pd.read_csv(target_file_dir)
-        for i in df["filename"]:
-            if i[:2] == "IN":
-                if int(i[7:i.index(".")]) < self.range1[1] and int(i[7:i.index(".")]) >= self.range1[0]:
-                    labels.append((i,0))
-
-            elif i[:2] == "IS":
-                if int(i[6:i.index(".")]) < self.range2[1] and int(i[6:i.index(".")]) >= self.range2[0]:
-                    labels.append((i,1))
-
-            elif i[:2] == "KA":
-                if int(i[6:i.index(".")]) < self.range3[1] and int(i[6:i.index(".")]) >= self.range3[0]:
-                    labels.append((i,2))
-        return labels
-            
+    
 
 class DCMDataset(Dataset):
     

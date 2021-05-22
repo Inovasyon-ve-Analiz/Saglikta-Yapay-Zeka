@@ -50,7 +50,7 @@ def test(model, set, criterion,mode, r):
     return 100*correct/size
 
 
-def run(model_names,lrs,wds,batch_sizes,ts,iterations,ks,rs,epochs,transfer_learning,dataset_ratio,inmeyok_range,iskemi_range,kanama_range,optimizer_name,path):
+def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,transfer_learning,dataset_ratio,inmeyok_range,iskemi_range,kanama_range,optimizer_name,path):
     
     model_names = [model_names] if not type(model_names) == list else model_names
     lrs = [lrs] if not type(lrs) == list else lrs
@@ -121,11 +121,13 @@ def run(model_names,lrs,wds,batch_sizes,ts,iterations,ks,rs,epochs,transfer_lear
 
 
                                     criterion = nn.CrossEntropyLoss()
+                                    if is_cropping:
+                                        preprocessing_params = [t, i, k, 0, 0, 500, 500, r]  #t,i,k,x,y,w,h,r
+                                    else:
+                                        preprocessing_params = [t, i, k, 0, 0, 500, 500, 512]  #t,i,k,x,y,w,h,r
 
-                                    preprocessing_params = [t, i, k, 0, 0, 500, 500, r]  #t,i,k,x,y,w,h,r
-
-                                    train_data = CTDataset("labels.csv", path, preprocessing_params, train_range1,train_range2,train_range3)
-                                    test_data = CTDataset("labels.csv", path, preprocessing_params, test_range1,test_range2,test_range3)
+                                    train_data = CTDataset("labels_rotated.csv", path, preprocessing_params, train_range1,train_range2,train_range3,is_cropping)
+                                    test_data = CTDataset("labels_rotated.csv", path, preprocessing_params, test_range1,test_range2,test_range3,is_cropping)
                                     
                                     train_loader = DataLoader(train_data,batch_size=batch_size,shuffle=True)
                                     test_loader = DataLoader(test_data,batch_size=batch_size,shuffle=True)
@@ -134,8 +136,8 @@ def run(model_names,lrs,wds,batch_sizes,ts,iterations,ks,rs,epochs,transfer_lear
                                     dir = "runs/run" + str(run_number) 
                                     os.mkdir(dir)
                                     f = open(dir+"/results.txt","w")
-                                    f.write(f"model: {model_name}\nlr: {lr}\nwd: {wd}\nbatch size: {batch_size}\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}\ntrain test ratio: {dataset_ratio}\ntrain size: {len(train_loader.dataset)}\ntest size: {len(test_loader.dataset)}\noptimizer: {optimizer_name}\nloss function: CrossEntropyLoss\nnumber of epochs: {epochs}\n\n")
-                                    print(f"model: {model_name}\nlr: {lr}\nwd: {wd}\nbatch size: {batch_size}\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}\ntrain test ratio: {dataset_ratio}\ntrain size: {len(train_loader.dataset)}\ntest size: {len(test_loader.dataset)}\noptimizer: {optimizer_name}\nloss function: CrossEntropyLoss\nnumber of epochs: {epochs}")
+                                    f.write(f"model: {model_name}\nlr: {lr}\nwd: {wd}\nbatch size: {batch_size}\nis_cropping: {is_cropping}\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}\ntrain test ratio: {dataset_ratio}\ntrain size: {len(train_loader.dataset)}\ntest size: {len(test_loader.dataset)}\noptimizer: {optimizer_name}\nloss function: CrossEntropyLoss\nnumber of epochs: {epochs}\n\n")
+                                    print(f"model: {model_name}\nlr: {lr}\nwd: {wd}\nbatch size: {batch_size}\nis_cropping: {is_cropping}\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}\ntrain test ratio: {dataset_ratio}\ntrain size: {len(train_loader.dataset)}\ntest size: {len(test_loader.dataset)}\noptimizer: {optimizer_name}\nloss function: CrossEntropyLoss\nnumber of epochs: {epochs}")
                                     train_accuracies = []
                                     test_accuracies = []
                                     tac = 0                                    

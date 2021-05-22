@@ -2,42 +2,30 @@ import cv2
 import pandas as pd
 
 import os
+"""
+aug_types = {"rotate":cv2.rotate}
 
-labels = {}
+def augmentation(aug_type, path="TRAINING"):
+    img = cv2.imread("TRAINING\\INMEYOK0.png",0)
+    image = aug_types[aug_type](img,cv2.cv2.ROTATE_90_CLOCKWISE)
+    cv2.imshow("fasdsdgf",image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows
 
-for i, filename in enumerate(os.listdir("resize_train")):
-    if filename=="KANAMA700.png":
-        continue
-    print(i)
-    img = cv2.imread("resize_train\\"+filename,0)
-    img2 = cv2.flip(img, 0)
-    img3 = cv2.flip(img, 1)
-    img4 = cv2.flip(img, -1)
+augmentation("rotate")
 
-    cv2.imwrite("augmented_train\\"+filename,img)
-    cv2.imwrite("augmented_train\\"+filename[:-4]+"w.png",img2)
-    cv2.imwrite("augmented_train\\"+filename[:-4]+"h.png",img3)
-    cv2.imwrite("augmented_train\\"+filename[:-4]+"r.png",img4)
+"""
+os.chdir("..")
+files = os.listdir("TRAINING")   
+for i, filename in enumerate(files):
+        
+    img = cv2.imread("TRAINING\\"+filename,0)
+    image = cv2.rotate(img, cv2.cv2.ROTATE_90_CLOCKWISE)
+    cv2.imwrite("TRAINING\\"+filename,img)
+    cv2.imwrite("rotated\\"+filename[:-4]+"r.png",image)
 
-    if filename[:2] == "IN":
-        labels[filename] = 0
-        labels[filename[:-4]+"w.png"] = 0
-        labels[filename[:-4]+"h.png"] = 0
-        labels[filename[:-4]+"r.png"] = 0
+    k = cv2.waitKey(0)
+    if k == ord("q"):
+        break
 
-    elif filename[:2] == "IS":
-        labels[filename] = 1
-        labels[filename[:-4]+"w.png"] = 1
-        labels[filename[:-4]+"h.png"] = 1
-        labels[filename[:-4]+"r.png"] = 1
-
-    elif filename[:2] == "KA":
-        labels[filename] = 2
-        labels[filename[:-4]+"w.png"] = 2
-        labels[filename[:-4]+"h.png"] = 2
-        labels[filename[:-4]+"r.png"] = 2
-
-   
-
-pd.DataFrame(list(labels.items()),columns = ['column1','column2']).to_csv("labels_augmented_train.csv",index=False, header=False)
-
+cv2.destroyAllWindows()
