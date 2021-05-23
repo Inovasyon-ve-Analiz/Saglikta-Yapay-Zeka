@@ -156,7 +156,7 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                         test_accuracies.append(test_accuracy)
                                         tac = (time.time()-tic)/60
                                         print(f"{tac} dk")
-                                        with open(dir+"/results.txt","a") as file:
+                                        with open(f"{dir}/run{run_number} results.txt","w") as file:
                                             epoch = "".join([f"Epoch {e} train accuracy: {train_accuracy}\n",
                                                     f"Epoch {e} test accuracy: {test_accuracy}\nt: {tac}\n\n"])
                                             file.write(epoch)
