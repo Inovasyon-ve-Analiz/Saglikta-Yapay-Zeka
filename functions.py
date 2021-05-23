@@ -154,7 +154,7 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                             plt.figure(run_number)
                                             plt.plot(range(len(train_accuracies)),train_accuracies)
                                             plt.plot(range(len(test_accuracies)),test_accuracies)
-                                            plt.savefig(dir+"/results"+str(run_number)+".png")
+                                            plt.savefig(dir+"/results"+str(e+1)+".png")
                                         f.write(f"train accuracies: {train_accuracies}\ntest accuracies: {test_accuracies}\nt: {tac}")
                                         f.close()
                                         plt.clf()
