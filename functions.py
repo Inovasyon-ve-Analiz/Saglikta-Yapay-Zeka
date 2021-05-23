@@ -2,16 +2,12 @@ import torch
 from torch import nn 
 from torch import optim
 from torchvision import models
-from torch.utils.data import DataLoader
-
+from torch.utils.data import DataLoader, random_split
 from matplotlib import pyplot as plt
-
+from dataset import CTDataset
 import time
 import os
 import sys
-
-from dataset import CTDataset
-
 
 def train(model, set, optimizer, criterion, r):
     model.train()
@@ -50,7 +46,7 @@ def test(model, set, criterion,mode, r):
     return 100*correct/size
 
 
-def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,transfer_learning,dataset_ratio,inmeyok_range,iskemi_range,kanama_range,optimizer_name,path):
+def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,transfer_learning,ratio,optimizer_name,aug_types):
     
     model_names = [model_names] if not type(model_names) == list else model_names
     lrs = [lrs] if not type(lrs) == list else lrs
@@ -60,13 +56,6 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
     iterations = [iterations] if not type(iterations) == list else iterations
     ks = [ks] if not type(ks) == list else ks
     rs = [rs] if not type(rs) == list else rs
-
-    train_range1 = [inmeyok_range[0],int((inmeyok_range[1]-inmeyok_range[0])*dataset_ratio)]
-    train_range2 = [iskemi_range[0],int((iskemi_range[1]-iskemi_range[0])*dataset_ratio)]
-    train_range3 = [kanama_range[0],int((iskemi_range[1]-kanama_range[0])*dataset_ratio)]
-    test_range1 = [int((inmeyok_range[1]-inmeyok_range[0])*dataset_ratio),inmeyok_range[1]]
-    test_range2 = [int((iskemi_range[1]-iskemi_range[0])*dataset_ratio),iskemi_range[1]]
-    test_range3 = [int((kanama_range[1]-kanama_range[0])*dataset_ratio),kanama_range[1]]
     
     try: 
         os.mkdir("runs")
@@ -119,16 +108,22 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                     elif optimizer_name == "RMSprop":
                                         optimizer = optim.RMSprop(net.parameters(),lr=lr,weight_decay=wd)
 
-
                                     criterion = nn.CrossEntropyLoss()
                                     if is_cropping:
                                         preprocessing_params = [t, i, k, 0, 0, 500, 500, r]  #t,i,k,x,y,w,h,r
                                     else:
-                                        preprocessing_params = [t, i, k, 0, 0, 500, 500, 512]  #t,i,k,x,y,w,h,r
+                                        preprocessing_params = [t, i, k, 0, 0, 500, 500, 512]  #t,i,k,x,y,w,h,
 
-                                    train_data = CTDataset("labels_rotated.csv", path, preprocessing_params, train_range1,train_range2,train_range3,is_cropping)
-                                    test_data = CTDataset("labels_rotated.csv", path, preprocessing_params, test_range1,test_range2,test_range3,is_cropping)
-                                    
+                                    img_dirs= augmentation(aug_types)
+                                    dataset = CTDataset("labels_rotated.csv", img_dirs, preprocessing_params, is_cropping)
+                                    train_data = []; test_data = [];
+                                    for i in range(len(aug_types) + 1):
+                                        data = dataset[dataset[:, 1] == i]
+                                        split = int(len(data * ratio))
+                                        train_set, test_set = random_split(data, [split, len(data) - split], generator=torch.Generator().manual_seed(42))
+                                        train_data = train_data + train_set
+                                        test_data = test_data + test_set
+
                                     train_loader = DataLoader(train_data,batch_size=batch_size,shuffle=True)
                                     test_loader = DataLoader(test_data,batch_size=batch_size,shuffle=True)
 

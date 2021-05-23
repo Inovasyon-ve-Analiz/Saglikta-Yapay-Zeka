@@ -12,8 +12,6 @@ w = 500
 h = 500
 for count, f in enumerate(os.listdir("TRAINING")):
     img = cv2.imread("TRAINING\\"+f)
-
- 
     cimg = img[y:y+h,x:x+w,:]
     rimg = cimg.copy()
     gimg = cv2.cvtColor(cimg.copy(),cv2.COLOR_BGR2GRAY)
@@ -30,10 +28,8 @@ for count, f in enumerate(os.listdir("TRAINING")):
             minY = min(c.T[1][0])
             maxX = max(c.T[0][0])
             minX = min(c.T[0][0])
-        
-   
-    cv2.imwrite("resize32\\"+f,cv2.resize(rimg[minY:minY+(maxY-minY),minX:minX+(maxX-minX),:],(32,32)))
 
+    cv2.imwrite("resize32\\"+f,cv2.resize(rimg[minY:minY+(maxY-minY),minX:minX+(maxX-minX),:],(32,32)))
     print(count)
 
 

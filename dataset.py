@@ -10,12 +10,10 @@ import os
 
 class CTDataset(Dataset):
 
-    def __init__(self, img_dirs,preprocessing_params,ratio,is_cropping):
-        self.ratio = ratio
+    def __init__(self, img_dirs, preprocessing_params, is_cropping):
         self.img_dirs = img_dirs
         self.preprocessing_params = preprocessing_params
         self.is_cropping = is_cropping
-      
         self.image_dirs = []
         self.labels = []
         for dir in self.img_dirs:
