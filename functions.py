@@ -149,15 +149,21 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                             test_accuracies.append(test_accuracy)
                                             tac = (time.time()-tic)/60
                                             print(f"{tac} dk")
-
+                                            f.write(f"train accuracies: {train_accuracies}\ntest accuracies: {test_accuracies}\nt: {tac}\n")
+                                            plt.clf()
+                                            plt.figure(run_number)
+                                            plt.plot(range(len(train_accuracies)),train_accuracies)
+                                            plt.plot(range(len(test_accuracies)),test_accuracies)
+                                            plt.savefig(dir+"/results"+str(run_number)+".png")
                                         f.write(f"train accuracies: {train_accuracies}\ntest accuracies: {test_accuracies}\nt: {tac}")
                                         f.close()
+                                        plt.clf()
                                         plt.figure(run_number)
                                         plt.plot(range(len(train_accuracies)),train_accuracies)
                                         plt.plot(range(len(test_accuracies)),test_accuracies)
                                         plt.savefig(dir+"/results.png")
 
-                                    except KeyboardInterrupt:
+                                    except:
                                         f.write(f"train accuracies: {train_accuracies}\ntest accuracies: {test_accuracies}\nt: {tac}\nkeyboardinterrupt")
                                         f.close()
                                         plt.figure(run_number)
