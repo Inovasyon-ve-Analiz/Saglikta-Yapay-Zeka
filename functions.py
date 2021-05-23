@@ -166,6 +166,7 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                     except:
                                         f.write(f"train accuracies: {train_accuracies}\ntest accuracies: {test_accuracies}\nt: {tac}\nkeyboardinterrupt")
                                         f.close()
+                                        plt.clf()
                                         plt.figure(run_number)
                                         plt.plot(range(len(train_accuracies)),train_accuracies)
                                         plt.plot(range(len(test_accuracies)),test_accuracies)
