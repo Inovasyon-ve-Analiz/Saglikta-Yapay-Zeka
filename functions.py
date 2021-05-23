@@ -132,7 +132,7 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                     run_number += 1
                                     dir = "runs/run" + str(run_number) 
                                     os.mkdir(dir)
-                                    with open(f"{dir}/results.txt","w") as file:
+                                    with open(f"{dir}/run{run_number} results.txt","w") as file:
                                         run_data = "".join([f"run number: {run_number}\nmodel: {model_name}\nlr: {lr}\nwd: {wd}\n",
                                                    f"batch size: {batch_size}\nis_cropping: {is_cropping}",
                                                    f"\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}",
@@ -165,10 +165,10 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                             plt.figure(f"Run {run_number}")
                                             plt.plot(range(len(train_accuracies)),train_accuracies)
                                             plt.plot(range(len(test_accuracies)),test_accuracies)
-                                            plt.savefig(f"{dir}/Run {run_number} Results ({e} epochs).png")
+                                            plt.savefig(f"{dir}/run{run_number} results ({e} epochs).png")
                                         if e > 2:
                                             for i in range(2, e):
-                                                os.remove(f"{dir}/Run {run_number} Results ({i} Epochs).png")
+                                                os.remove(f"{dir}/run{run_number} results ({i} epochs).png")
 
 
 
