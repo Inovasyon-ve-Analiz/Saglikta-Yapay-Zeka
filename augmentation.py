@@ -9,6 +9,8 @@ def augmentation(img_dirs):
             output_path = os.path.join(dir,filename)
             if os.path.exists(dir) == False:
                 os.mkdir(dir)
+            else:
+                continue
             img = cv2.imread(input_path, 0)
             if dir == "rotated":
                 image = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
