@@ -8,7 +8,7 @@ wds = 0             #1e-2
 # [0, 0.0001, 0.0003, 0.001, 0.003, 0.01]
 batch_sizes = 10            #5
 # [5, 10]
-is_cropping = True         #False
+is_cropping = False        #False
 ts = 5                      #5
 iterations = 1              #1
 ks = 7                      #7

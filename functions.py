@@ -160,9 +160,9 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,number_o
                                             epoch = "".join([f"Epoch {e} train accuracy: {train_accuracy}\n",
                                                     f"Epoch {e} test accuracy: {test_accuracy}\nt: {tac}\n\n"])
                                             epochs.append(epoch)
-                                            general_info = "".join([f"Training Accuricies:\nMax: {max(train_accuracies)}\n"
+                                            general_info = "".join([f"Training Accuracies:\nMax: {max(train_accuracies)}\n"
                                                                     f"Min: {min(train_accuracies)}\nMean: {np.mean(train_accuracies)}\n\n"
-                                                                    f"Test Accuricies:\nMax: {max(test_accuracies)}\n"
+                                                                    f"Test Accuracies:\nMax: {max(test_accuracies)}\n"
                                                                     f"Min: {min(test_accuracies)}\nMean: {np.mean(test_accuracies)}"])
                                             file.write(run_data + "".join(epochs) + general_info)
 
