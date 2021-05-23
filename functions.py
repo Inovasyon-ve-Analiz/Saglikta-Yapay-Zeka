@@ -124,7 +124,7 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                     img_dirs= augmentation(aug_types)
 
                                     train_data = CTDataset(img_dirs, preprocessing_params, is_cropping, 1, ratio)
-                                    test_data = CTDataset(img_dirs, preprocessing_params, is_cropping, 0, ratio)
+                                    test_data = CTDa taset(img_dirs, preprocessing_params, is_cropping, 0, ratio)
 
                                     train_loader = DataLoader(train_data,batch_size=batch_size,shuffle=True)
                                     test_loader = DataLoader(test_data,batch_size=batch_size,shuffle=True)
