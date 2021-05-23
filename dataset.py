@@ -70,10 +70,10 @@ class CTDataset(Dataset):
         h = self.preprocessing_params[6]
         r = self.preprocessing_params[7]
         
-        cimg = img[y:y+h,x:x+w,:]
+        cimg = img[y:y+h,x:x+w]
         rimg = cimg.copy()
-        gimg = cv2.cvtColor(cimg.copy(),cv2.COLOR_BGR2GRAY)
-        _, th1 = cv2.threshold(gimg.copy(), t,255,cv2.THRESH_BINARY)
+        #gimg = cv2.cvtColor(cimg.copy(),cv2.COLOR_BGR2GRAY)
+        _, th1 = cv2.threshold(rimg.copy(), t,255,cv2.THRESH_BINARY)
         dilation = cv2.erode(th1.copy(),np.ones((k,k),np.uint8),iterations=i)
         contours, _ = cv2.findContours(dilation.copy(),cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
         l = 0
@@ -86,8 +86,8 @@ class CTDataset(Dataset):
                 minY = min(c.T[1][0])
                 maxX = max(c.T[0][0])
                 minX = min(c.T[0][0])
-        resized = cv2.resize(rimg[minY:minY+(maxY-minY),minX:minX+(maxX-minX),:],(r,r))
-        resized = cv2.cvtColor(resized,cv2.COLOR_BGR2GRAY)
+        resized = cv2.resize(rimg[minY:minY+(maxY-minY),minX:minX+(maxX-minX)],(r,r))
+        # resized = cv2.cvtColor(resized,cv2.COLOR_BGR2GRAY)
         return resized
 
     

@@ -53,7 +53,7 @@ def test(model, set, criterion,mode, r):
     return 100*correct/size
 
 
-def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,transfer_learning,ratio,optimizer_name,aug_types):
+def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,number_of_epoch,transfer_learning,ratio,optimizer_name,aug_types):
     
     model_names = [model_names] if not type(model_names) == list else model_names
     lrs = [lrs] if not type(lrs) == list else lrs
@@ -124,7 +124,7 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                     img_dirs= augmentation(aug_types)
 
                                     train_data = CTDataset(img_dirs, preprocessing_params, is_cropping, 1, ratio)
-                                    test_data = CTDa taset(img_dirs, preprocessing_params, is_cropping, 0, ratio)
+                                    test_data = CTDataset(img_dirs, preprocessing_params, is_cropping, 0, ratio)
 
                                     train_loader = DataLoader(train_data,batch_size=batch_size,shuffle=True)
                                     test_loader = DataLoader(test_data,batch_size=batch_size,shuffle=True)
@@ -138,15 +138,15 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                                    f"\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}",
                                                    f"\ntrain test ratio: {ratio}\ntrain size: {len(train_loader.dataset)}",
                                                    f"\ntest size: {len(test_loader.dataset)}\noptimizer: {optimizer_name}",
-                                                   f"\nloss function: CrossEntropyLoss\nnumber of epochs: {epochs}\n\n"])
+                                                   f"\nloss function: CrossEntropyLoss\nnumber of epochs: {number_of_epoch}\n\n"])
 
                                         print(run_data)
                                         file.write(run_data)
 
                                     train_accuracies = []
                                     test_accuracies = []
-
-                                    for e in range(1, epochs + 1):
+                                    epochs = []
+                                    for e in range(1, number_of_epoch + 1):
                                         tic = time.time()
                                         print(f"Epoch {e}\n-----------------------")
                                         train(net, train_loader, optimizer, criterion,preprocessing_params[-1])
@@ -159,7 +159,13 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                         with open(f"{dir}/run{run_number} results.txt","w") as file:
                                             epoch = "".join([f"Epoch {e} train accuracy: {train_accuracy}\n",
                                                     f"Epoch {e} test accuracy: {test_accuracy}\nt: {tac}\n\n"])
-                                            file.write(epoch)
+                                            epochs.append(epoch)
+                                            general_info = "".join([f"Training Accuricies:\nMax: {max(train_accuracies)},"
+                                                                    f"Min: {min(train_accuracies)} Mean: {np.mean(train_accuracies)}\n\n"
+                                                                    f"Test Accuricies:\nMax: {max(test_accuracies)}\n"
+                                                                    f"Min: {min(test_accuracies)} Mean: {np.mean(test_accuracies)}"])
+                                            file.write(run_data + "".join(epochs) + general_info)
+
                                         if e > 1:
                                             plt.clf()
                                             plt.figure(f"Run {run_number}")
@@ -167,8 +173,7 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                             plt.plot(range(len(test_accuracies)),test_accuracies)
                                             plt.savefig(f"{dir}/run{run_number} results ({e} epochs).png")
                                         if e > 2:
-                                            for i in range(2, e):
-                                                os.remove(f"{dir}/run{run_number} results ({i} epochs).png")
+                                            os.remove(f"{dir}/run{run_number} results ({e-1} epochs).png")
 
 
 
