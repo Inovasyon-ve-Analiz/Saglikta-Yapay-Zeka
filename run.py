@@ -4,8 +4,9 @@ from functions import run
 
 model_names = "resnet18"    #resnet18, resnet34, resnet50, resnet101, resnet152
 lrs = 1e-4                  #1e-3
-wds = [1e-2]                #1e-2
-batch_sizes = 5             #5
+wds = 0.003               #1e-2
+# [0, 0.0001, 0.0003, 0.001, 0.003, 0.01]
+batch_sizes = 10             #5
 is_cropping = False         #False
 ts = 5                      #5
 iterations = 1              #1
@@ -14,7 +15,6 @@ rs = 100                    #100
 epochs = 15                 #10
 transfer_learning = True    #True, False
 dataset_ratio = .8          #.75
-number_of_samples = 6649
 optimizer_name = "Adam"     #Adam, SGD, RMSprop
 is_rotated = True
 aug_types = {"rotation": is_rotated}
