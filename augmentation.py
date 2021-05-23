@@ -4,11 +4,14 @@ import os
 def augmentation(img_dirs):
     for dir in img_dirs:
         files = os.listdir("TRAINING")
+        if os.path.exists(dir) == False:
+            os.mkdir(dir)
+        else:
+            print(dir + " directory already exits.")
+            continue
         for i, filename in enumerate(files):
             input_path = os.path.join("TRAINING",filename)
             output_path = os.path.join(dir,filename)
-            if os.path.exists(dir) == False:
-                os.mkdir(dir)
             img = cv2.imread(input_path, 0)
             if dir == "rotated":
                 image = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)

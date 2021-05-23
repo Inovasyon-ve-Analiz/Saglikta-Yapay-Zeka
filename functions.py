@@ -133,15 +133,15 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                     dir = "runs/run" + str(run_number) 
                                     os.mkdir(dir)
                                     f = open(dir+"/results.txt","w")
-                                    f.write(f"model: {model_name}\nlr: {lr}\nwd: {wd}\nbatch size: {batch_size}\nis_cropping: {is_cropping}\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}\ntrain test ratio: {ratio}\ntrain size: {len(train_loader.dataset)}\ntest size: {len(test_loader.dataset)}\noptimizer: {optimizer_name}\nloss function: CrossEntropyLoss\nnumber of epochs: {epochs}\n\n")
-                                    print(f"model: {model_name}\nlr: {lr}\nwd: {wd}\nbatch size: {batch_size}\nis_cropping: {is_cropping}\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}\ntrain test ratio: {ratio}\ntrain size: {len(train_loader.dataset)}\ntest size: {len(test_loader.dataset)}\noptimizer: {optimizer_name}\nloss function: CrossEntropyLoss\nnumber of epochs: {epochs}")
+                                    f.write(f"run: {run_number}\nmodel: {model_name}\nlr: {lr}\nwd: {wd}\nbatch size: {batch_size}\nis_cropping: {is_cropping}\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}\ntrain test ratio: {ratio}\ntrain size: {len(train_loader.dataset)}\ntest size: {len(test_loader.dataset)}\noptimizer: {optimizer_name}\nloss function: CrossEntropyLoss\nnumber of epochs: {epochs}\n\n")
+                                    print(f"run: {run_number}\nmodel: {model_name}\nlr: {lr}\nwd: {wd}\nbatch size: {batch_size}\nis_cropping: {is_cropping}\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}\ntrain test ratio: {ratio}\ntrain size: {len(train_loader.dataset)}\ntest size: {len(test_loader.dataset)}\noptimizer: {optimizer_name}\nloss function: CrossEntropyLoss\nnumber of epochs: {epochs}")
                                     train_accuracies = []
                                     test_accuracies = []
                                     tac = 0                                    
                                     try:
                                         for e in range(epochs):
                                             tic = time.time()
-                                            print(f"Epoch {e+1}\n-----------------------")
+                                            print(f"Epoch {e+1}\n-----------------------run: {run_number}")
                                             train(net, train_loader, optimizer, criterion,preprocessing_params[-1])
                                             train_accuracy = test(net,train_loader,criterion,"Train",preprocessing_params[-1])
                                             test_accuracy = test(net,test_loader,criterion,"Test",preprocessing_params[-1])
