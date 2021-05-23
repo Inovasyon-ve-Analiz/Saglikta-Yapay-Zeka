@@ -157,7 +157,7 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                             tac = (time.time()-tic)/60
                                             print(f"{tac} dk")
                                             with open(dir+"/results.txt","a") as file:
-                                                epoch = f"Epoch {e+1} train accuracy: {train_accuracy}\ntest accuracy: {train_accuracy}\nt: {tac}\n"
+                                                epoch = f"Epoch {e+1} train accuracy: {train_accuracy}\ntest accuracy: {test_accuracy}\nt: {tac}\n"
                                                 file.write(epoch)
                                                 print(epoch)
                                             plt.clf()
