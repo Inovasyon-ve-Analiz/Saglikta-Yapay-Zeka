@@ -148,16 +148,16 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
 
                                     for e in range(1, epochs + 1):
                                         tic = time.time()
-                                        print(f"Epoch {e+1}\n-----------------------")
+                                        print(f"Epoch {e}\n-----------------------")
                                         train(net, train_loader, optimizer, criterion,preprocessing_params[-1])
                                         train_accuracy = test(net,train_loader,criterion,"Train",preprocessing_params[-1])
                                         test_accuracy = test(net,test_loader,criterion,"Test",preprocessing_params[-1])
                                         train_accuracies.append(train_accuracy)
                                         test_accuracies.append(test_accuracy)
-                                        time = (time.time()-tic)/60
-                                        print(f"{time} dk")
+                                        tac = (time.time()-tic)/60
+                                        print(f"{tac} dk")
                                         with open(dir+"/results.txt","a") as file:
-                                            epoch = f"Epoch {e} train accuracy: {train_accuracy}\ntest accuracy: {test_accuracy}\nt: {time}\n"
+                                            epoch = f"Epoch {e} train accuracy: {train_accuracy}\ntest accuracy: {test_accuracy}\nt: {tac}\n"
                                             file.write(epoch)
                                             print(epoch)
                                         if e > 1:
