@@ -13,12 +13,10 @@ ks = 7                      #7
 rs = 100                    #100
 epochs = 15                 #10
 transfer_learning = True    #True, False
-dataset_ratio = .7          #.75
-inmeyok_range = [0,4426*2]    #[0,4426]
-iskemi_range = [0,1129*2]     #[0,1129]
-kanama_range = [0,1093*2]     #[0,1093]
+dataset_ratio = .8          #.75
+number_of_samples = 6649
 optimizer_name = "Adam"     #Adam, SGD, RMSprop
-is_rotated = False
+is_rotated = True
 aug_types = {"rotation": is_rotated}
 
 run(model_names,lrs, wds, batch_sizes, is_cropping, ts, iterations, ks, rs, epochs, transfer_learning,

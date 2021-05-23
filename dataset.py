@@ -1,36 +1,54 @@
 import torch
 from torch.utils.data import Dataset
-
 import cv2
 import numpy as np
-import pandas as pd
-import pydicom
-
 import os
+import random
+from torch.utils.data import random_split
 
 class CTDataset(Dataset):
-
-    def __init__(self, img_dirs, preprocessing_params, is_cropping):
-        self.img_dirs = img_dirs
+    random.seed(1)
+    def __init__(self, folders, preprocessing_params, is_cropping, is_train, ratio):
+        self.folders = folders
         self.preprocessing_params = preprocessing_params
         self.is_cropping = is_cropping
-        self.image_dirs = []
         self.labels = []
-        for dir in self.img_dirs:
+        self.ratio = ratio
+        self.is_train = is_train
+
+        image_dirs = []
+        labels = []
+        for dir in self.folders:
              for i,f in enumerate(os.listdir(dir)):
-                self.image_dirs.append(os.path.join(dir,f))
+                image_dirs.append(os.path.join(dir,f))
                 if f[:2] == "IN":
-                   self.labels.append(0)
+                   labels.append(0)
                 elif f[:2] == "IS":
-                   self.labels.append(1)
+                   labels.append(1)
                 elif f[:2] == "KA":
-                   self.labels.append(2)
+                   labels.append(2)
+
+        mylist = np.array(list((zip(image_dirs, labels))))
+        labels = np.array(labels, dtype=int)
+        train_list = []
+        test_list = []
+
+        for i in range(3):
+            list2 = mylist[labels == i]
+            split = int(len(list2) * ratio)
+            train_image_dirs, test_image_dirs = random_split(list2, [split, len(list2) - split],
+                                    generator=torch.Generator().manual_seed(42))
+            train_list.extend(train_image_dirs)
+            test_list.extend(test_image_dirs)
+
+        self.data = train_list if is_train == 1 else test_list
+        #self.number_of_samples = len(os.listdir(image_dirs[0]))
 
     def __len__(self):
-        return len(self.labels)
+        return len(self.data)
 
     def __getitem__(self, index):
-        img_path = self.image_dirs[index]
+        img_path = self.data[index][0]
         #print(img_path)
         img = cv2.imread(img_path,0)
         if self.is_cropping:
@@ -38,7 +56,7 @@ class CTDataset(Dataset):
         else:
             img = cv2.resize(img,(512,512))
         img = torch.tensor(img)
-        label = self.labels[index]
+        label = self.data[index][1]
         sample = img, label
         return sample
 
@@ -74,69 +92,3 @@ class CTDataset(Dataset):
 
     
 
-class DCMDataset(Dataset):
-    
-    def __init__(self,target_file_dir, img_dir, transform=None, target_transform=None):
-        self.img_labels = pd.read_csv(target_file_dir)
-        self.img_dir = img_dir
-        self.transform = transform
-        self.target_transform = target_transform
-
-    def __len__(self):
-        return len(self.img_labels)
-
-    def __getitem__(self, index):
-        img_path = os.path.join(self.img_dir, self.img_labels.iloc[index,0])
-        img = pydicom.read_file(img_path)
-        img.pixel_array.dtype=np.int16
-        img = torch.tensor(img.pixel_array)
-        label = self.img_labels.iloc[index,1]
-        if self.transform:
-            img = self.transform(img)
-        if self.target_transform:
-            label = self.target_transform(label)
-        sample = img,label
-        return sample
-
-class CTDataset2(Dataset):
-
-    def __init__(self,target_file_dir, img_dir, transform=None, target_transform=None):
-        self.img_labels = pd.read_csv(target_file_dir)
-        self.img_dir = img_dir
-        self.transform = transform
-        self.target_transform = target_transform
-
-    def __len__(self):
-        return len(self.img_labels)
-
-    def __getitem__(self, index):
-        img_path = os.path.join(self.img_dir, self.img_labels.iloc[index,0])
-        img = torch.tensor(cv2.imread(img_path,0))
-        label = self.img_labels.iloc[index,1]
-        if self.transform:
-            img = self.transform(img)
-        if self.target_transform:
-            label = self.target_transform(label)
-        sample = img,label
-        return sample
-
-
-"""
-class DCMDataset(Dataset):
-
-    def __init__(self,X_dir,y_dir,X_transform=None, y_transform=None):
-
-        self.X_dir = X_dir
-        self.y_dir = y_dir
-        self.X_transform = X_transform
-        self.y_transform = y_transform
-        self.X = torch.load(X_dir)
-        self.y = torch.load(y_dir)
-        
-    def __len__(self):
-        return len(self.y)
-
-    def get_item(self, index):
-        return self.X[index],self.y[index]
-
-"""

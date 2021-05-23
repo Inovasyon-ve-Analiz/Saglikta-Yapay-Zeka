@@ -8,18 +8,20 @@ from dataset import CTDataset
 import time
 import os
 import sys
+import numpy as np
 
 def augmentation(aug_types):
     img_dirs = ["TRAINING"]
     for aug in aug_types:
         if aug == "rotation" and aug_types[aug] == True:
             img_dirs.append("rotated")
+    return img_dirs
 
 def train(model, set, optimizer, criterion, r):
     model.train()
     size = len(set.dataset)
-
     for batch_idx, (X,y) in enumerate(set):
+        y = np.array(y, dtype = int)
         y = torch.tensor(y).cuda().long()
         X = torch.reshape(torch.tensor(X),[len(y),1,r,r]).cuda().float()
         pred = model(X)
@@ -28,7 +30,6 @@ def train(model, set, optimizer, criterion, r):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-
         if batch_idx % 100 == 0:
             print(f"loss: {loss.item():>7f}\t [{batch_idx*len(X):>5d}/{size:>5d}]")
     
@@ -40,9 +41,9 @@ def test(model, set, criterion,mode, r):
     
     with torch.no_grad():
         for batch_idx, (X,y) in enumerate(set):
+            y = np.array(y, dtype=int)
             y = torch.tensor(y).cuda().long()
             X = torch.reshape(torch.tensor(X),[len(y),1,r,r]).cuda().float()
-
             pred = model(X)
             test_loss += criterion(pred, y).item()
             correct += (pred.argmax(1) == y).type(torch.float).sum().item()
@@ -121,14 +122,9 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                         preprocessing_params = [t, i, k, 0, 0, 500, 500, 512]  #t,i,k,x,y,w,h,
 
                                     img_dirs= augmentation(aug_types)
-                                    dataset = CTDataset("labels_rotated.csv", img_dirs, preprocessing_params, is_cropping)
-                                    train_data = []; test_data = [];
-                                    for i in range(len(aug_types) + 1):
-                                        data = dataset[dataset[:, 1] == i]
-                                        split = int(len(data * ratio))
-                                        train_set, test_set = random_split(data, [split, len(data) - split], generator=torch.Generator().manual_seed(42))
-                                        train_data = train_data + train_set
-                                        test_data = test_data + test_set
+
+                                    train_data = CTDataset(img_dirs, preprocessing_params, is_cropping, 1, ratio)
+                                    test_data = CTDataset(img_dirs, preprocessing_params, is_cropping, 0, ratio)
 
                                     train_loader = DataLoader(train_data,batch_size=batch_size,shuffle=True)
                                     test_loader = DataLoader(test_data,batch_size=batch_size,shuffle=True)
@@ -137,8 +133,8 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                     dir = "runs/run" + str(run_number) 
                                     os.mkdir(dir)
                                     f = open(dir+"/results.txt","w")
-                                    f.write(f"model: {model_name}\nlr: {lr}\nwd: {wd}\nbatch size: {batch_size}\nis_cropping: {is_cropping}\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}\ntrain test ratio: {dataset_ratio}\ntrain size: {len(train_loader.dataset)}\ntest size: {len(test_loader.dataset)}\noptimizer: {optimizer_name}\nloss function: CrossEntropyLoss\nnumber of epochs: {epochs}\n\n")
-                                    print(f"model: {model_name}\nlr: {lr}\nwd: {wd}\nbatch size: {batch_size}\nis_cropping: {is_cropping}\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}\ntrain test ratio: {dataset_ratio}\ntrain size: {len(train_loader.dataset)}\ntest size: {len(test_loader.dataset)}\noptimizer: {optimizer_name}\nloss function: CrossEntropyLoss\nnumber of epochs: {epochs}")
+                                    f.write(f"model: {model_name}\nlr: {lr}\nwd: {wd}\nbatch size: {batch_size}\nis_cropping: {is_cropping}\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}\ntrain test ratio: {ratio}\ntrain size: {len(train_loader.dataset)}\ntest size: {len(test_loader.dataset)}\noptimizer: {optimizer_name}\nloss function: CrossEntropyLoss\nnumber of epochs: {epochs}\n\n")
+                                    print(f"model: {model_name}\nlr: {lr}\nwd: {wd}\nbatch size: {batch_size}\nis_cropping: {is_cropping}\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}\ntrain test ratio: {ratio}\ntrain size: {len(train_loader.dataset)}\ntest size: {len(test_loader.dataset)}\noptimizer: {optimizer_name}\nloss function: CrossEntropyLoss\nnumber of epochs: {epochs}")
                                     train_accuracies = []
                                     test_accuracies = []
                                     tac = 0                                    
