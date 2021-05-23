@@ -157,19 +157,18 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                         tac = (time.time()-tic)/60
                                         print(f"{tac} dk")
                                         with open(dir+"/results.txt","a") as file:
-                                            epoch = f"Epoch {e} train accuracy: {train_accuracy}\ntest accuracy: {test_accuracy}\nt: {tac}\n"
+                                            epoch = "".join([f"Epoch {e} train accuracy: {train_accuracy}\n",
+                                                    f"Epoch {e} test accuracy: {test_accuracy}\nt: {tac}\n\n"])
                                             file.write(epoch)
-                                            print(epoch)
                                         if e > 1:
                                             plt.clf()
                                             plt.figure(f"Run {run_number}")
                                             plt.plot(range(len(train_accuracies)),train_accuracies)
                                             plt.plot(range(len(test_accuracies)),test_accuracies)
-                                            plt.savefig(f"{dir}/Run{run_number} results ({e} epochs).png")
-                                            print("Epoch data is successfully saved")
+                                            plt.savefig(f"{dir}/Run {run_number} Results ({e} epochs).png")
                                         if e > 2:
                                             for i in range(2, e):
-                                                os.remove(f"{dir}/Run{run_number} results ({i} Epochs).png")
+                                                os.remove(f"{dir}/Run {run_number} Results ({i} Epochs).png")
 
 
 
