@@ -132,7 +132,7 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                     run_number += 1
                                     dir = "runs/run" + str(run_number) 
                                     os.mkdir(dir)
-                                    with open(dir+"/results.txt","w") as file:
+                                    with open(f"{dir}/results.txt","w") as file:
                                         run_data = "".join([f"run number: {run_number}\nmodel: {model_name}\nlr: {lr}\nwd: {wd}\n",
                                                    f"batch size: {batch_size}\nis_cropping: {is_cropping}",
                                                    f"\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}",
@@ -145,32 +145,32 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
 
                                     train_accuracies = []
                                     test_accuracies = []
-                                    try:
-                                        for e in range(epochs):
-                                            tic = time.time()
-                                            print(f"Epoch {e+1}\n-----------------------")
-                                            train(net, train_loader, optimizer, criterion,preprocessing_params[-1])
-                                            train_accuracy = test(net,train_loader,criterion,"Train",preprocessing_params[-1])
-                                            test_accuracy = test(net,test_loader,criterion,"Test",preprocessing_params[-1])
-                                            train_accuracies.append(train_accuracy)
-                                            test_accuracies.append(test_accuracy)
-                                            tac = (time.time()-tic)/60
-                                            print(f"{tac} dk")
-                                            with open(dir+"/results.txt","a") as file:
-                                                epoch = f"Epoch {e+1} train accuracy: {train_accuracy}\ntest accuracy: {test_accuracy}\nt: {tac}\n"
-                                                file.write(epoch)
-                                                print(epoch)
+
+                                    for e in range(1, epochs + 1):
+                                        tic = time.time()
+                                        print(f"Epoch {e+1}\n-----------------------")
+                                        train(net, train_loader, optimizer, criterion,preprocessing_params[-1])
+                                        train_accuracy = test(net,train_loader,criterion,"Train",preprocessing_params[-1])
+                                        test_accuracy = test(net,test_loader,criterion,"Test",preprocessing_params[-1])
+                                        train_accuracies.append(train_accuracy)
+                                        test_accuracies.append(test_accuracy)
+                                        time = (time.time()-tic)/60
+                                        print(f"{time} dk")
+                                        with open(dir+"/results.txt","a") as file:
+                                            epoch = f"Epoch {e} train accuracy: {train_accuracy}\ntest accuracy: {test_accuracy}\nt: {time}\n"
+                                            file.write(epoch)
+                                            print(epoch)
+                                        if e > 1:
                                             plt.clf()
                                             plt.figure(f"Run {run_number}")
                                             plt.plot(range(len(train_accuracies)),train_accuracies)
                                             plt.plot(range(len(test_accuracies)),test_accuracies)
-                                            plt.savefig(f"{dir}/ Run {run_number} Results.png")
+                                            plt.savefig(f"{dir}/Run{run_number} results ({e} epochs).png")
+                                            print("Epoch data is successfully saved")
+                                        if e > 2:
+                                            for i in range(2, e):
+                                                os.remove(f"{dir}/Run{run_number} results ({i} Epochs).png")
 
-                                    except KeyboardInterrupt:
-                                        plt.clf()
-                                        plt.plot(range(len(train_accuracies)),train_accuracies)
-                                        plt.plot(range(len(test_accuracies)),test_accuracies)
-                                        plt.savefig(f"{dir}/ Run {run_number} Results.png")
-                                        sys.exit()
+
 
                                         
