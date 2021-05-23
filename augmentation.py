@@ -17,7 +17,6 @@ def augmentation(img_dirs):
             if k == ord("q"):
                 break
 
-
     cv2.destroyAllWindows()
 
 img_dirs = ["rotated"]
