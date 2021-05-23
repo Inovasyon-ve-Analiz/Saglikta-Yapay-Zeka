@@ -9,6 +9,12 @@ import time
 import os
 import sys
 
+def augmentation(aug_types):
+    img_dirs = ["TRAINING"]
+    for aug in aug_types:
+        if aug == "rotation" and aug_types[aug] == True:
+            img_dirs.append("rotated")
+
 def train(model, set, optimizer, criterion, r):
     model.train()
     size = len(set.dataset)
