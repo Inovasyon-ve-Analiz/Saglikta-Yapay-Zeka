@@ -132,12 +132,19 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                     run_number += 1
                                     dir = "runs/run" + str(run_number) 
                                     os.mkdir(dir)
-                                    f = open(dir+"/results.txt","w")
-                                    f.write(f"model: {model_name}\nlr: {lr}\nwd: {wd}\nbatch size: {batch_size}\nis_cropping: {is_cropping}\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}\ntrain test ratio: {ratio}\ntrain size: {len(train_loader.dataset)}\ntest size: {len(test_loader.dataset)}\noptimizer: {optimizer_name}\nloss function: CrossEntropyLoss\nnumber of epochs: {epochs}\n\n")
-                                    print(f"model: {model_name}\nlr: {lr}\nwd: {wd}\nbatch size: {batch_size}\nis_cropping: {is_cropping}\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}\ntrain test ratio: {ratio}\ntrain size: {len(train_loader.dataset)}\ntest size: {len(test_loader.dataset)}\noptimizer: {optimizer_name}\nloss function: CrossEntropyLoss\nnumber of epochs: {epochs}")
+                                    with open(dir+"/results.txt","w") as file:
+                                        run_data = "".join([f"run number: {run_number}\nmodel: {model_name}\nlr: {lr}\nwd: {wd}\n",
+                                                   f"batch size: {batch_size}\nis_cropping: {is_cropping}",
+                                                   f"\npreprocessing: {preprocessing_params}\ntransfer_learning: {transfer_learning}",
+                                                   f"\ntrain test ratio: {ratio}\ntrain size: {len(train_loader.dataset)}",
+                                                   f"\ntest size: {len(test_loader.dataset)}\noptimizer: {optimizer_name}",
+                                                   f"\nloss function: CrossEntropyLoss\nnumber of epochs: {epochs}\n\n"])
+
+                                        print(run_data)
+                                        file.write(run_data)
+
                                     train_accuracies = []
                                     test_accuracies = []
-                                    tac = 0                                    
                                     try:
                                         for e in range(epochs):
                                             tic = time.time()
@@ -149,21 +156,21 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,epochs,t
                                             test_accuracies.append(test_accuracy)
                                             tac = (time.time()-tic)/60
                                             print(f"{tac} dk")
-
-                                        f.write(f"train accuracies: {train_accuracies}\ntest accuracies: {test_accuracies}\nt: {tac}")
-                                        f.close()
-                                        plt.figure(run_number)
-                                        plt.plot(range(len(train_accuracies)),train_accuracies)
-                                        plt.plot(range(len(test_accuracies)),test_accuracies)
-                                        plt.savefig(dir+"/results.png")
+                                            with open(dir+"/results.txt","a") as file:
+                                                epoch = f"Epoch {e+1} train accuracy: {train_accuracy}\ntest accuracy: {train_accuracy}\nt: {tac}\n"
+                                                file.write(epoch)
+                                                print(epoch)
+                                            plt.clf()
+                                            plt.figure(f"Run {run_number}")
+                                            plt.plot(range(len(train_accuracies)),train_accuracies)
+                                            plt.plot(range(len(test_accuracies)),test_accuracies)
+                                            plt.savefig(f"{dir}/ Run {run_number} Results.png")
 
                                     except KeyboardInterrupt:
-                                        f.write(f"train accuracies: {train_accuracies}\ntest accuracies: {test_accuracies}\nt: {tac}\nkeyboardinterrupt")
-                                        f.close()
-                                        plt.figure(run_number)
+                                        plt.clf()
                                         plt.plot(range(len(train_accuracies)),train_accuracies)
                                         plt.plot(range(len(test_accuracies)),test_accuracies)
-                                        plt.savefig(dir+"/results.png")
+                                        plt.savefig(f"{dir}/ Run {run_number} Results.png")
                                         sys.exit()
 
                                         
