@@ -1,5 +1,12 @@
 import cv2
 import os
+import numpy as np
+
+def rotate_image(image, angle):
+    image_center = tuple(np.array(image.shape[1::-1]) / 2)
+    rot_mat = cv2.getRotationMatrix2D(image_center, angle, 1.0)
+    result = cv2.warpAffine(image, rot_mat, image.shape[1::-1], flags=cv2.INTER_LINEAR)
+    return result
 
 def augmentation(img_dirs):
     for dir in img_dirs:
@@ -15,12 +22,13 @@ def augmentation(img_dirs):
             img = cv2.imread(input_path, 0)
             if dir == "rotated":
                 image = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
+            elif dir == "rotated45":
+                image = rotate_image(img, 45)
+            elif dir == "rotated315":
+                image = rotate_image(img, -45)
             cv2.imwrite(output_path, image)
-            k = cv2.waitKey(0)
-            if k == ord("q"):
-                break
+            print(i)
+            
 
-    cv2.destroyAllWindows()
-
-img_dirs = ["rotated"]
+img_dirs = ["rotated","rotated45","rotated315"]
 augmentation(img_dirs)

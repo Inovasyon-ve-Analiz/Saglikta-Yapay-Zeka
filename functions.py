@@ -15,6 +15,10 @@ def augmentation(aug_types):
     for aug in aug_types:
         if aug == "rotation" and aug_types[aug] == True:
             img_dirs.append("rotated")
+        elif aug == "rotation45" and aug_types[aug] == True:
+            img_dirs.append("rotated45")
+        elif aug == "rotation315" and aug_types[aug] == True:
+            img_dirs.append("rotated315")
     return img_dirs
 
 def train(model, set, optimizer, criterion, r):

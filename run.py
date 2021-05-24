@@ -2,7 +2,7 @@ from functions import run
 
 #HYPERPARAMETERS            
 
-model_names = ["resnet18", "resnet50"]    #resnet18, resnet34, resnet50, resnet101, resnet152
+model_names = ["resnet18"]    #resnet18, resnet34, resnet50, resnet101, resnet152
 lrs = 1e-4                  #1e-3
 wds = 0             #1e-2
 # [0, 0.0001, 0.0003, 0.001, 0.003, 0.01]
@@ -18,7 +18,7 @@ transfer_learning = True    #True, False
 dataset_ratio = .8          #.75
 optimizer_name = "Adam"     #Adam, SGD, RMSprop
 is_rotated = True
-aug_types = {"rotation": is_rotated}
+aug_types = {"rotation": is_rotated, "rotation45": is_rotated, "rotation315": is_rotated}
 
 run(model_names,lrs, wds, batch_sizes, is_cropping, ts, iterations, ks, rs, epochs, transfer_learning,
     dataset_ratio, optimizer_name, aug_types)
