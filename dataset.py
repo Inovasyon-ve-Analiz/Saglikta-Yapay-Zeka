@@ -23,17 +23,16 @@ class CTDataset(Dataset):
                 image_dirs.append(os.path.join(dir,f))
                 if f[:2] == "IN":
                    labels.append(0)
-                elif f[:2] == "IS":
+                elif f[:2] == "IS" or f[:2] == "KA":
                    labels.append(1)
-                elif f[:2] == "KA":
-                   labels.append(2)
+                
 
         mylist = np.array(list((zip(image_dirs, labels))))
         labels = np.array(labels, dtype=int)
         train_list = []
         test_list = []
 
-        for i in range(3):
+        for i in range(2):
             list2 = mylist[labels == i]
             split = int(len(list2) * ratio)
             train_image_dirs, test_image_dirs = random_split(list2, [split, len(list2) - split],

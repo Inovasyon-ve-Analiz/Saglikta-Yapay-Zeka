@@ -27,7 +27,7 @@ def train(model, set, optimizer, criterion, r):
     for batch_idx, (X,y) in enumerate(set):
         y = np.array(y, dtype = int)
         y = torch.tensor(y).cuda().long()
-        X = torch.reshape(torch.tensor(X),[len(y),1,r,r]).cuda().float()
+        X = torch.reshape(X,[len(y),1,r,r]).cuda().float()
         pred = model(X)
         loss = criterion(pred, y)
 
@@ -47,7 +47,7 @@ def test(model, set, criterion,mode, r):
         for batch_idx, (X,y) in enumerate(set):
             y = np.array(y, dtype=int)
             y = torch.tensor(y).cuda().long()
-            X = torch.reshape(torch.tensor(X),[len(y),1,r,r]).cuda().float()
+            X = torch.reshape(X,[len(y),1,r,r]).cuda().float()
             pred = model(X)
             test_loss += criterion(pred, y).item()
             correct += (pred.argmax(1) == y).type(torch.float).sum().item()
@@ -86,27 +86,27 @@ def run(model_names,lrs,wds,batch_sizes,is_cropping,ts,iterations,ks,rs,number_o
                                     if model_name == "resnet18":
                                         net = models.resnet18(pretrained=transfer_learning)
                                         net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
-                                        net.fc = nn.Linear(in_features=512, out_features=3, bias=True)
+                                        net.fc = nn.Linear(in_features=512, out_features=2, bias=True)
                                         
                                     elif model_name == "resnet34":
                                         net = models.resnet34(pretrained=transfer_learning)
                                         net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
-                                        net.fc = nn.Linear(in_features=512, out_features=3, bias=True)
+                                        net.fc = nn.Linear(in_features=512, out_features=2, bias=True)
                                         
                                     elif model_name == "resnet50":
                                         net = models.resnet50(pretrained=transfer_learning)
                                         net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
-                                        net.fc = nn.Linear(in_features=2048, out_features=3, bias=True)
+                                        net.fc = nn.Linear(in_features=2048, out_features=2, bias=True)
                                         
                                     elif model_name == "resnet101":
                                         net = models.resnet101(pretrained=transfer_learning)
                                         net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
-                                        net.fc = nn.Linear(in_features=2048, out_features=3, bias=True)
+                                        net.fc = nn.Linear(in_features=2048, out_features=2, bias=True)
                                         
                                     elif model_name == "resnet152":
                                         net = models.resnet152(pretrained=transfer_learning)
                                         net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
-                                        net.fc = nn.Linear(in_features=2048, out_features=3, bias=True)
+                                        net.fc = nn.Linear(in_features=2048, out_features=2, bias=True)
                                         
                                     net.cuda()
 

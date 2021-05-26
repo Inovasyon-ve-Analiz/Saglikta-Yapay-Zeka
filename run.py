@@ -18,7 +18,7 @@ transfer_learning = True    #True, False
 dataset_ratio = .8          #.75
 optimizer_name = "Adam"     #Adam, SGD, RMSprop
 is_rotated = True
-aug_types = {"rotation": is_rotated, "rotation45": is_rotated, "rotation315": is_rotated}
+aug_types = {"rotation": is_rotated, "rotation45": not is_rotated, "rotation315": not is_rotated}
 
 run(model_names,lrs, wds, batch_sizes, is_cropping, ts, iterations, ks, rs, epochs, transfer_learning,
     dataset_ratio, optimizer_name, aug_types)
