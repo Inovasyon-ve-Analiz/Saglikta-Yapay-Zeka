@@ -5,10 +5,11 @@ import numpy as np
 import os
 import random
 from torch.utils.data import random_split
+import pydicom
 
 class CTDataset(Dataset):
     random.seed(1)
-    def __init__(self, folders, preprocessing_params, is_cropping, is_train, ratio):
+    def __init__(self, folders, preprocessing_params, is_cropping, is_train, ratio,binary_classification):
         self.folders = folders
         self.preprocessing_params = preprocessing_params
         self.is_cropping = is_cropping
@@ -19,36 +20,56 @@ class CTDataset(Dataset):
         image_dirs = []
         labels = []
         for dir in self.folders:
-             for i,f in enumerate(os.listdir(dir)):
-                image_dirs.append(os.path.join(dir,f))
-                if f[:2] == "IN":
-                   labels.append(0)
-                elif f[:2] == "IS" or f[:2] == "KA":
-                   labels.append(1)
-                
+            if not dir[:4] == "rsna":
+                for i,f in enumerate(os.listdir(dir)):
+                    image_dirs.append(os.path.join(dir,f))
+                    if f[:2] == "IN":
+                        labels.append(0)
+                    elif f[:2] == "IS":
+                        labels.append(1)
+                    elif f[:2] == "KA":
+                        if binary_classification:
+                            labels.append(1)
+                        else:
+                            labels.append(2)
+              
 
         mylist = np.array(list((zip(image_dirs, labels))))
         labels = np.array(labels, dtype=int)
         train_list = []
         test_list = []
 
-        for i in range(2):
+        for i in range(2 if binary_classification else 3):
             list2 = mylist[labels == i]
             split = int(len(list2) * ratio)
             train_image_dirs, test_image_dirs = random_split(list2, [split, len(list2) - split],
                                     generator=torch.Generator().manual_seed(42))
             train_list.extend(train_image_dirs)
             test_list.extend(test_image_dirs)
-
+        
+        rsna_image_dirs = []
+        rsna_labels = []
+        for dir in self.folders:
+            if dir[:4] == "rsna":
+                for i,f in enumerate(os.listdir(dir)):
+                    rsna_image_dirs.append(os.path.join(dir,f))
+                    if f[:2] == "IN":
+                        rsna_labels.append(0)
+                    elif f[:2] == "KA":
+                        if binary_classification:
+                            rsna_labels.append(1)
+                        else:
+                            rsna_labels.append(2)
+        myrsnalist = np.array(list((zip(rsna_image_dirs, rsna_labels))))
+        train_list.extend(myrsnalist)
         self.data = train_list if is_train == 1 else test_list
         #self.number_of_samples = len(os.listdir(image_dirs[0]))
-
+        
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, index):
         img_path = self.data[index][0]
-        #print(img_path)
         img = cv2.imread(img_path,0)
         if self.is_cropping:
             img = self.process(img)

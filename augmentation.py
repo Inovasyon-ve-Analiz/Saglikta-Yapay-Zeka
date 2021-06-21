@@ -10,17 +10,17 @@ def rotate_image(image, angle):
 
 def augmentation(img_dirs):
     for dir in img_dirs:
-        files = os.listdir("TRAINING")
+        files = os.listdir("rsna")
         if os.path.exists(dir) == False:
             os.mkdir(dir)
         else:
             print(dir + " directory already exits.")
-            continue
+            #continue
         for i, filename in enumerate(files):
-            input_path = os.path.join("TRAINING",filename)
+            input_path = os.path.join("rsna",filename)
             output_path = os.path.join(dir,filename)
             img = cv2.imread(input_path, 0)
-            if dir == "rotated":
+            if dir == "rsna_rotated":
                 image = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
             elif dir == "rotated45":
                 image = rotate_image(img, 45)
@@ -30,5 +30,5 @@ def augmentation(img_dirs):
             print(i)
             
 
-img_dirs = ["rotated","rotated45","rotated315"]
+img_dirs = ["rsna_rotated"]
 augmentation(img_dirs)
