@@ -5,8 +5,8 @@ from functions import run
 lr = 1e-4
 wd = 0
 number_of_epoch = 20
-train_dir = "TRAINING/train/PNG"
-test_dir = "TRAINING/test/PNG"
+train_dir = "new_dataset/train/PNG"
+test_dir = "new_dataset/test/PNG"
 save_path = "snapshots"
 batch_size = 4
 binary_classification = True
