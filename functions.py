@@ -8,22 +8,6 @@ import os
 import time
 import numpy as np
 
-def confusion_matrix(y,pred):
-    TP = 0
-    TN = 0
-    FP = 0 
-    FN = 0
-    for i,j in enumerate(y):
-        if j.item() > 0 and pred[i].item() > 0:
-            TP += 1
-        elif j.item() > 0 and pred[i].item() == 0:
-            FP += 1
-        elif j.item() == 0 and pred[i].item() > 0:
-            FN += 1
-        elif j.item() == 0 and pred[i].item() == 0:
-            TN += 1
-    return TP, TN, FP, FN
-
 
 def train(model, set, optimizer, criterion, save_path, epoch):
     model.train()
@@ -47,11 +31,10 @@ def train(model, set, optimizer, criterion, save_path, epoch):
     print("saved")
     
 
-def test(model, set, criterion,mode):
+def test(model, set, criterion, mode):
     model.eval()
     size = len(set.dataset)
     test_loss, correct = 0, 0
-    TP, TN, FP, FN = 0, 0, 0, 0
     with torch.no_grad():
         for batch_idx, (X,y) in enumerate(set):
             y = np.array(y, dtype=int)
@@ -60,21 +43,12 @@ def test(model, set, criterion,mode):
             pred = model(X)
             test_loss += criterion(pred, y).item()
             correct += (pred.argmax(1) == y).type(torch.float).sum().item()
-            matrix = confusion_matrix(y,pred.argmax(1))
-            TP += matrix[0]
-            TN += matrix[1]
-            FP += matrix[2]
-            FN += matrix[3]
             
-    sensitivity = TP/(TP+FN)
-    specificity = TN/(FP+TN)
     test_loss /= size
 
     print(f"{mode}: \nAccuracy: {100*correct/size:>0.1f}%, Avg Loss: {test_loss:>8f}, Correct: {correct}\n")
-    print(f"sensitivity: {sensitivity}, specificity: {specificity}, average: {(specificity+sensitivity)/2}\n")
-    print(f"{mode}: \nAccuracy: {100*(TP+TN)/(TP+TN+FP+FN):>0.1f}%, Correct: {TP+TN}\n")
     
-    return 100*correct/size, sensitivity, specificity, (sensitivity+specificity)/2
+    return 100*correct/size
 
 
 def run(lr, wd, number_of_epoch, train_dir, test_dir, save_path, binary_classification=False, batch_size=4):

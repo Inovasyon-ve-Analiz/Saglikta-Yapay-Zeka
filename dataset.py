@@ -10,15 +10,10 @@ class CTDataset(Dataset):
         self.data = []
 
         for i,f in enumerate(os.listdir(data_dir)):
-            if f[:2] == "IN":
+            if f[:2] == "IS":
                 self.data.append((os.path.join(data_dir, f), 0))
-            elif f[:2] == "IS":
-                self.data.append((os.path.join(data_dir, f), 1))
             elif f[:2] == "KA":
-                if binary_classification:
-                    self.data.append((os.path.join(data_dir, f), 1))
-                else:
-                    self.data.append((os.path.join(data_dir, f), 2))
+                self.data.append((os.path.join(data_dir, f), 1))
         
 
     def __len__(self):
