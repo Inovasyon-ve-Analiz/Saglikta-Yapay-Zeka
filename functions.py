@@ -25,7 +25,7 @@ def confusion_matrix(y,pred):
     return TP, TN, FP, FN
 
 
-def train(model, set, optimizer, criterion, epoch, save_path):
+def train(model, set, optimizer, criterion, save_path, epoch):
     model.train()
     size = len(set.dataset)
     for batch_idx, (X,y) in enumerate(set):
@@ -38,10 +38,13 @@ def train(model, set, optimizer, criterion, epoch, save_path):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+        
         if batch_idx % 100 == 0:
             print(f"loss: {loss.item():>7f}\t [{batch_idx*len(X):>5d}/{size:>5d}]")
-    
-    torch.save(model.state_dict(), os.path.join(save_path, str(epoch)+ '.pth'))
+
+    model_path = os.path.join(save_path, str(epoch)+ '.pth')
+    torch.save(model.state_dict(), model_path)
+    print("saved")
     
 
 def test(model, set, criterion,mode):
@@ -76,6 +79,7 @@ def test(model, set, criterion,mode):
 
 def run(lr, wd, number_of_epoch, train_dir, test_dir, save_path, binary_classification=False, batch_size=4):
 
+    os.makedirs(save_path, exist_ok=True)
     out_features = 2 if binary_classification else 3
     net = models.resnet18(pretrained=True)
     net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)

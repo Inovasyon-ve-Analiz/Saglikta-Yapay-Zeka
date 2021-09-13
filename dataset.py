@@ -9,17 +9,16 @@ class CTDataset(Dataset):
 
         self.data = []
 
-        for dir in data_dir:
-            for i,f in enumerate(os.listdir(dir)):
-                if f[:2] == "IN":
-                    self.data.append((os.path.join(dir, f), 0))
-                elif f[:2] == "IS":
-                    self.data.append((os.path.join(dir, f), 1))
-                elif f[:2] == "KA":
-                    if binary_classification:
-                        self.data.append((os.path.join(dir, f), 1))
-                    else:
-                        self.data.append((os.path.join(dir, f), 2))
+        for i,f in enumerate(os.listdir(data_dir)):
+            if f[:2] == "IN":
+                self.data.append((os.path.join(data_dir, f), 0))
+            elif f[:2] == "IS":
+                self.data.append((os.path.join(data_dir, f), 1))
+            elif f[:2] == "KA":
+                if binary_classification:
+                    self.data.append((os.path.join(data_dir, f), 1))
+                else:
+                    self.data.append((os.path.join(data_dir, f), 2))
         
 
     def __len__(self):
@@ -29,7 +28,7 @@ class CTDataset(Dataset):
     def __getitem__(self, index):
         img_path = self.data[index][0]
         img = cv2.imread(img_path,0)
-        
+        img = cv2.resize(img, (512,512))
         img = torch.tensor(img)
         label = self.data[index][1]
         sample = img, label
