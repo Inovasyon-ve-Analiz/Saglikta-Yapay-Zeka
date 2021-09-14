@@ -41,12 +41,7 @@ def train(model, set, optimizer, criterion, save_path, epoch):
         
         if batch_idx % 100 == 0:
             print(f"loss: {loss.item():>7f}\t [{batch_idx*len(X):>5d}/{size:>5d}]")
-
-    model_path = os.path.join(save_path, str(epoch)+ '.pth')
-    torch.save(model.state_dict(), model_path)
-    print("saved")
     
-
 def test(model, set, criterion,mode):
     model.eval()
     size = len(set.dataset)
@@ -74,10 +69,10 @@ def test(model, set, criterion,mode):
     print(f"sensitivity: {sensitivity}, specificity: {specificity}, average: {(specificity+sensitivity)/2}\n")
     print(f"{mode}: \nAccuracy: {100*(TP+TN)/(TP+TN+FP+FN):>0.1f}%, Correct: {TP+TN}\n")
     
-    return 100*correct/size, sensitivity, specificity, (sensitivity+specificity)/2
+    return 100*correct/size
 
 
-def run(lr, wd, number_of_epoch, train_dir, test_dir, save_path, binary_classification=False, batch_size=4):
+def run(lr, wd, number_of_epoch, train_dir, test_dir, save_path, binary_classification=False, batch_size=4, checkpoint=10):
 
     os.makedirs(save_path, exist_ok=True)
     out_features = 2 if binary_classification else 3
@@ -98,12 +93,24 @@ def run(lr, wd, number_of_epoch, train_dir, test_dir, save_path, binary_classifi
     train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=True)
     
+    best_acc = 0
     for e in range(1, number_of_epoch + 1):
         tic = time.time()
         print(f"Epoch {e}\n-----------------------")
         train(net, train_loader, optimizer, criterion, save_path, e)
-        test(net, train_loader, criterion, "Train")
-        test(net, test_loader, criterion, "Test")
+        train_acc = test(net, train_loader, criterion, "Train")
+        test_acc = test(net, test_loader, criterion, "Test")
+        
+        if test_acc > best_acc:
+            best_acc = test_acc
+            model_path = os.path.join(save_path, str(e) + '_best.pth')
+            torch.save(net.state_dict(), model_path)
+        
+        if e % checkpoint == 0:
+            model_path = os.path.join(save_path, str(e)+ '.pth')
+            torch.save(net.state_dict(), model_path)
+            
+        print("saved")
         
         tac = (time.time()-tic)/60
         print(f"{tac} dk")
