@@ -90,5 +90,5 @@ def run(lr, wd, number_of_epoch, train_dir, test_dir, save_path, binary_classifi
         print("Best Accuracy: ", best_acc)
             
         tac = (time.time()-tic)/60
-        print(f"{tac} dk")
+        print(f"\n{tac} dk")
         
