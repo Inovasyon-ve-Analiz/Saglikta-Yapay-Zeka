@@ -77,13 +77,17 @@ def run(lr, wd, number_of_epoch, train_dir, test_dir, save_path, binary_classifi
         test_acc = test(net, test_loader, criterion, "Test")
        
         if test_acc > best_acc:
+            print("Saving best model...")
             best_acc = test_acc
             model_path = os.path.join(save_path, str(e) + '_best.pth')
             torch.save(net.state_dict(), model_path)
-        
+                    
         if e % checkpoint == 0:
+            print("Saving model...")
             model_path = os.path.join(save_path, str(e)+ '.pth')
             torch.save(net.state_dict(), model_path)
+            
+        print("Best Accuracy: ", best_acc)
             
         tac = (time.time()-tic)/60
         print(f"{tac} dk")
