@@ -5,11 +5,14 @@ import os
 
 class CTDataset(Dataset):
 
-    def __init__(self, data_dir, binary_classification):
-
+    def __init__(self, data_dir, binary_classification, inference=False):
+        self.inference = inference
         self.data = []
-
         for i,f in enumerate(os.listdir(data_dir)):
+            if self.inference:
+                self.data.append([os.path.join(data_dir, f)])
+                continue
+            
             if f[:2] == "IN":
                 self.data.append((os.path.join(data_dir, f), 0))
             elif f[:2] == "IS":
@@ -19,7 +22,8 @@ class CTDataset(Dataset):
                     self.data.append((os.path.join(data_dir, f), 1))
                 else:
                     self.data.append((os.path.join(data_dir, f), 2))
-        
+
+      
 
     def __len__(self):
         return len(self.data)
@@ -30,6 +34,10 @@ class CTDataset(Dataset):
         img = cv2.imread(img_path,0)
         img = cv2.resize(img, (512,512))
         img = torch.tensor(img)
+        
+        if self.inference:
+            return img, img_path
+
         label = self.data[index][1]
         sample = img, label
         return sample
