@@ -42,7 +42,7 @@ def test(model, set, criterion, mode):
             
     test_loss /= size
 
-    print(f"{mode}: \nAccuracy: {100*correct/size:>0.1f}%, Avg Loss: {test_loss:>8f}, Correct: {correct}\n")
+    print(f"{mode}: \nAccuracy: {100*correct/size:>0.4f}%, Avg Loss: {test_loss:>8f}, Correct: {correct}\n")
     
     return 100*correct/size
 
