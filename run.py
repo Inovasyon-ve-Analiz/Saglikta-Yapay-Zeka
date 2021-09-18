@@ -8,7 +8,7 @@ number_of_epoch = 1000
 train_dir = "new_dataset/train"
 test_dir = "new_dataset/test"
 save_path = "snapshots"
-batch_size = 64
+batch_size = 128
 binary_classification = True
 checkpoint = 20
 
