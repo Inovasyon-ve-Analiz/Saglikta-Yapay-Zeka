@@ -29,7 +29,7 @@ class CTDataset(Dataset):
         img = cv2.imread(img_path,0)
         img = cv2.resize(img, (512,512))
         if self.mode == "train":
-            img = self.transform(img)
+            img = self.transform(image=img)
 
         img = torch.tensor(img)
         label = self.data[index][1]
