@@ -3,11 +3,18 @@ from torch.utils.data import Dataset
 import cv2
 import os
 
+import albumentations as A
+
+
 class CTDataset(Dataset):
 
-    def __init__(self, data_dir, binary_classification, inference=False):
+    def __init__(self, data_dir, binary_classification, inference=False, mode="test"):
         self.inference = inference
         self.data = []
+        self.mode = mode
+        self.transform = A.Compose([ 
+             A.ShiftScaleRotate(shift_limit=0.15, scale_limit=0.15, rotate_limit=25, p=0.5, border_mode=0),
+        ])
         for i,f in enumerate(os.listdir(data_dir)):
             if self.inference:
                 self.data.append([os.path.join(data_dir, f)])
@@ -33,11 +40,16 @@ class CTDataset(Dataset):
         img_path = self.data[index][0]
         img = cv2.imread(img_path,0)
         img = cv2.resize(img, (512,512))
-        img = torch.tensor(img)
+
         
         if self.inference:
+            img = torch.tensor(img)
             return img, img_path
 
+        if self.mode == "train":
+            img = self.transform(image=img)["image"]
+
+        img = torch.tensor(img)
         label = self.data[index][1]
         sample = img, label
         return sample
