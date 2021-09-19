@@ -58,7 +58,7 @@ def run(lr, wd, number_of_epoch, train_dir, test_dir, save_path, binary_classifi
     start_epoch = 0
     if not model_dir == None:
         net.load_state_dict(torch.load(model_dir))
-        start_epoch = int(model_dir.split(".")[0].split("_")[0])
+        start_epoch = int(model_dir.split("/")[-1].split(".")[0].split("_")[0])
 
     if torch.cuda.is_available():
         net.cuda()
