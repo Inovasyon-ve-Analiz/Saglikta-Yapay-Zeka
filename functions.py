@@ -47,14 +47,19 @@ def test(model, set, criterion, mode):
     return 100*correct/size
 
 
-def run(lr, wd, number_of_epoch, train_dir, test_dir, save_path, binary_classification=False, batch_size=4, checkpoint=10):
+def run(lr, wd, number_of_epoch, train_dir, test_dir, save_path, binary_classification=False, batch_size=4, checkpoint=10, model_dir=None):
 
     os.makedirs(save_path, exist_ok=True)
     out_features = 2 if binary_classification else 3
     net = models.resnet18(pretrained=True)
     net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
     net.fc = nn.Linear(in_features=512, out_features=out_features, bias=True)
-        
+    
+    start_epoch = 0
+    if not model_dir == None:
+        net.load_state_dict(torch.load(model_dir))
+        start_epoch = int(model_dir.split(".")[0].split("_")[0])
+
     if torch.cuda.is_available():
         net.cuda()
 
@@ -69,7 +74,7 @@ def run(lr, wd, number_of_epoch, train_dir, test_dir, save_path, binary_classifi
     test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=True)
     
     best_acc = 0
-    for e in range(1, number_of_epoch + 1):
+    for e in range(1 + start_epoch, number_of_epoch + start_epoch + 1):
         tic = time.time()
         print(f"Epoch {e}\n-----------------------")
         train(net, train_loader, optimizer, criterion, save_path, e)
