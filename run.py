@@ -11,5 +11,6 @@ save_path = "snapshots"
 batch_size = 16
 binary_classification = True
 checkpoint = 10
+added = True
 
-run(lr=lr, wd=wd, number_of_epoch=number_of_epoch, train_dir=train_dir, test_dir=test_dir,save_path=save_path, batch_size=batch_size, binary_classification=binary_classification, checkpoint=checkpoint)
+run(lr=lr, wd=wd, number_of_epoch=number_of_epoch, train_dir=train_dir, test_dir=test_dir,save_path=save_path, batch_size=batch_size, binary_classification=binary_classification, checkpoint=checkpoint, added=added)

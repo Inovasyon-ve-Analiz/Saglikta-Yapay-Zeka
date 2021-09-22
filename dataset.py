@@ -10,7 +10,7 @@ import windowing
 
 class CTDataset(Dataset):
 
-    def __init__(self, data_dir, binary_classification, inference=False, mode="test"):
+    def __init__(self, data_dir, binary_classification, inference=False, mode="test", added=True):
         self.inference = inference
         self.data = []
         self.mode = mode
@@ -21,7 +21,9 @@ class CTDataset(Dataset):
             if self.inference:
                 self.data.append([os.path.join(data_dir, f)])
                 continue
-            
+            if (not added) and ("image" in f):
+                continue 
+
             if f[:2] == "IN":
                 self.data.append((os.path.join(data_dir, f), 0))
             elif f[:2] == "IS":
