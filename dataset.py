@@ -2,9 +2,11 @@ import torch
 from torch.utils.data import Dataset
 import cv2
 import os
+import numpy as np
 
 import albumentations as A
 
+import windowing
 
 class CTDataset(Dataset):
 
@@ -37,14 +39,15 @@ class CTDataset(Dataset):
 
 
     def __getitem__(self, index):
-        img_path = self.data[index][0]
-        img = cv2.imread(img_path,0)
+        dcm_path = self.data[index][0]
+        img = windowing.output(dcm_path).astype(np.uint8)
+        # img = cv2.imread(img_path,0)
         img = cv2.resize(img, (512,512))
 
         
         if self.inference:
             img = torch.tensor(img)
-            return img, img_path
+            return img, dcm_path
 
         if self.mode == "train":
             img = self.transform(image=img)["image"]
