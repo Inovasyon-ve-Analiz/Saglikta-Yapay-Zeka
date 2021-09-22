@@ -30,7 +30,7 @@ if __name__ == "__main__":
         for batch_idx,(X,file_name) in enumerate(test_loader):
             X = torch.reshape(X, [batch_size, 1, 512, 512]).cuda().float()
             pred = net(X)
-            file_id = file_name[0].split("\\")[-1].split(".")[0]
+            file_id = file_name[0].split("/")[-1].split(".")[0]
             result = (file_id,pred.argmax(1).cpu().numpy()[0])
             results.append(result)
             df_results[batch_idx] = [file_id, pred.argmax(1).cpu().numpy()[0]]
