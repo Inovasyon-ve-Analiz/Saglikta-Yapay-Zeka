@@ -135,4 +135,4 @@ dmypy.json
 
 new_dataset
 snapshots
-
+*.csv

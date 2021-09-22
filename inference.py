@@ -2,6 +2,7 @@ import torch
 from torch import nn 
 from torchvision import models
 from torch.utils.data import DataLoader
+import pandas as pd
 
 from dataset import CTDataset
 
@@ -25,6 +26,7 @@ if __name__ == "__main__":
     test_data = CTDataset(png_path, binary_classification=True, inference=True)
     test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=True)
     results = []
+    df_results = {}
     with torch.no_grad():
         for batch_idx,(X,file_name) in enumerate(test_loader):
             X = torch.reshape(X, [batch_size, 1, 512, 512]).cuda().float()
@@ -32,6 +34,7 @@ if __name__ == "__main__":
             file_id = file_name[0].split("\\")[-1].split(".")[0]
             result = (file_id,pred.argmax(1).cpu().numpy()[0])
             results.append(result)
+            df_results[batch_idx] = [file_id, pred.argmax(1).cpu().numpy()[0]]
     
     with open("asama1.txt","w") as file:
         file.write("Image Id	Inme Var mi?")
@@ -39,3 +42,6 @@ if __name__ == "__main__":
             file.write("\n")
             line = f"{result[0]}    {result[1]}"
             file.write(line)
+            
+    df = pd.DataFrame.from_dict(df_results, orient="index", columns=["ID", "ETİKET"])
+    df.to_csv("OTURUM1.csv")
