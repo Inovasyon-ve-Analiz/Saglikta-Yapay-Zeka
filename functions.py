@@ -87,11 +87,11 @@ def run(lr, wd, number_of_epoch, train_dir, test_dir, save_path, binary_classifi
 
     criterion = nn.CrossEntropyLoss()
 
-    train_data = CTDataset(train_dir, binary_classification)
-    test_data = CTDataset(test_dir, binary_classification)
+    train_data = CTDataset(train_dir, binary_classification, mode="train")
+    test_data = CTDataset(test_dir, binary_classification, mode="test")
 
-    train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, mode="train")
-    test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=True, mode="test")
+    train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
+    test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=True)
     
     best_acc = 0
     for e in range(1, number_of_epoch + 1):
