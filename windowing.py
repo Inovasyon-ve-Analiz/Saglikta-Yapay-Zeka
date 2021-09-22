@@ -77,7 +77,7 @@ def output(Input_Image):
     hu_mask = hu_mask.astype(np.float32)
     hu_mask = hu_mask/80*255
     # hu_mask = hu_mask.astype(int)
-    hu_mask = np.dstack([hu_mask, hu_mask, hu_mask])
+    # hu_mask = np.dstack([hu_mask, hu_mask, hu_mask])
     # WindowMax, WindowMin = show_img(hu_mask, minimum=20)
     # print(WindowMax, WindowMin)
     # Output_Image = Dicom_to_Image(DCM_Img, 0, 80)
