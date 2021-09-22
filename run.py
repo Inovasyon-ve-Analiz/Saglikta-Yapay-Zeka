@@ -4,11 +4,11 @@ from functions import run
 
 lr = 1e-4
 wd = 0
-number_of_epoch = 1000
-train_dir = "new_dataset/train/PNG"
-test_dir = "new_dataset/test/PNG"
+number_of_epoch = 2000
+train_dir = "new_dataset/train/DICOM"
+test_dir = "new_dataset/test/DICOM"
 save_path = "snapshots"
-batch_size = 32
+batch_size = 16
 binary_classification = True
 checkpoint = 10
 
