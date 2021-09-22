@@ -132,7 +132,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
+models
 new_dataset
 snapshots
 *.csv
+*.txt

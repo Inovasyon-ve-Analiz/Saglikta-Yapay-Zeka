@@ -8,7 +8,7 @@ from dataset import CTDataset
 
 #PATHS
 png_path = "new_dataset/test/PNG"
-model_path = "snapshots/20.pth"
+model_path = "models/20.pth"
 
 if __name__ == "__main__":
     out_features = 2
@@ -43,4 +43,4 @@ if __name__ == "__main__":
             file.write(line)
 
     df = pd.DataFrame.from_dict(df_results, orient="index", columns=["ID", "ETİKET"])
-    df.to_csv("OTURUM1.csv")
+    df.to_csv("OTURUM1.csv", index=False)
