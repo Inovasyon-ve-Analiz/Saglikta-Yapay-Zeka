@@ -9,7 +9,6 @@ from dataset import CTDataset
 #PATHS
 png_path = "new_dataset/test/PNG"
 model_path = "snapshots/20.pth"
-save_path = ""
 
 if __name__ == "__main__":
     out_features = 2
@@ -42,6 +41,6 @@ if __name__ == "__main__":
             file.write("\n")
             line = f"{result[0]}    {result[1]}"
             file.write(line)
-            
+
     df = pd.DataFrame.from_dict(df_results, orient="index", columns=["ID", "ETİKET"])
     df.to_csv("OTURUM1.csv")
