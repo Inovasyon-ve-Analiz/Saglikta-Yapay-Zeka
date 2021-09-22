@@ -6,7 +6,7 @@ import numpy as np
 
 import albumentations as A
 
-import windowing
+# import windowing
 
 class CTDataset(Dataset):
 
@@ -41,15 +41,15 @@ class CTDataset(Dataset):
 
 
     def __getitem__(self, index):
-        dcm_path = self.data[index][0]
-        img = windowing.output(dcm_path).astype(np.uint8)
-        # img = cv2.imread(img_path,0)
+        img_path = self.data[index][0]
+        # img = windowing.output(dcm_path).astype(np.uint8)
+        img = cv2.imread(img_path,0)
         img = cv2.resize(img, (512,512))
 
         
         if self.inference:
             img = torch.tensor(img)
-            return img, dcm_path
+            return img, img_path
 
         if self.mode == "train":
             img = self.transform(image=img)["image"]

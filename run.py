@@ -5,8 +5,8 @@ from functions import run
 lr = 1e-4
 wd = 0
 number_of_epoch = 2000
-train_dir = "new_dataset/train/DICOM"
-test_dir = "new_dataset/test/DICOM"
+train_dir = "new_dataset/train/WINDOW"
+test_dir = "new_dataset/test/WINDOW"
 save_path = "snapshots"
 batch_size = 16
 binary_classification = True
