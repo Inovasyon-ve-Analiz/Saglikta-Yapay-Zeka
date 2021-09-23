@@ -29,8 +29,8 @@ with open("asama1.txt","r") as file:
     specificity = TN/(FP+TN)
     
     
-print(correct)
-print(sensitivity)
-print(specificity)
-print((sensitivity+specificity)/2)
+print("Correct Classification: ", correct)
+print("Sensitivity: ", sensitivity)
+print("Specificity: ", specificity)
+print("Average: {0:.3f}".format((sensitivity+specificity)/2))
                    
